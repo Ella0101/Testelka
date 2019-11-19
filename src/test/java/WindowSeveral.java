@@ -1,4 +1,5 @@
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
@@ -9,6 +10,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 public class WindowSeveral {
@@ -43,6 +45,23 @@ public class WindowSeveral {
         By addToWishList = By.cssSelector(".add_to_wishlist");
         driver.findElement(addToWishList).click();
         wait.until(ExpectedConditions.invisibilityOfElementLocated(addToWishList));
+        By wishlistLink = By.cssSelector("#menu-item-248");
+        driver.findElement(wishlistLink).click();
+        String parentWindow = driver.getWindowHandle();
+        Set<String> windows = driver.getWindowHandles();
+        windows.remove(parentWindow);
+        String wishlistWindow = windows.iterator().next();
+        driver.switchTo().window(wishlistWindow);
+        By removeFromWishlist = By.cssSelector(".remove_from_wishlist");
+        driver.findElement(removeFromWishlist).click();
+        By emptyWishlist = By.cssSelector("td.wishlist-empty");
+        wait.until(ExpectedConditions.presenceOfElementLocated(emptyWishlist));
+        Assertions.assertDoesNotThrow(()->wait.until(ExpectedConditions.presenceOfElementLocated(emptyWishlist)),
+                "Wishlist is not empty.");
+
+
+
+
         
 
     }
